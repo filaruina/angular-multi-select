@@ -53,6 +53,8 @@ angular.module( 'multi-select', ['ng'] ).directive( 'multiSelect' , [ '$sce', '$
             isDisabled      : '=',
             directiveId     : '@',
             helperElements  : '@',
+            emptyText       : '=',
+            totalText       : '=',
             onOpen          : '&',
             onClose         : '&',
             onBlur          : '&',
@@ -179,7 +181,7 @@ angular.module( 'multi-select', ['ng'] ).directive( 'multiSelect' , [ '$sce', '$
 
                 // Write label...
                 if ( $scope.selectedItems.length === 0 ) {
-                    $scope.varButtonLabel = 'None selected';
+                    $scope.varButtonLabel = $scope.emptyText || 'None selected';
                 }
                 else {
                     var tempMaxLabels = $scope.selectedItems.length;
@@ -209,7 +211,13 @@ angular.module( 'multi-select', ['ng'] ).directive( 'multiSelect' , [ '$sce', '$
                             $scope.varButtonLabel += ', ... ';
                         }
 
-                        $scope.varButtonLabel += '(Total: ' + $scope.selectedItems.length + ')';
+                        if ($scope.totalText !== undefined) {
+                            var translations = $scope.totalText.split('|');
+                            var translation = $scope.selectedItems.length > 1 ? translations[1] : translations[0];
+                            $scope.varButtonLabel += translation.replace('%n', $scope.selectedItems.length);
+                        } else {
+                            $scope.varButtonLabel += '(Total: ' + $scope.selectedItems.length + ')';
+                        }
                     }
                 }
                 $scope.varButtonLabel = $sce.trustAsHtml( $scope.varButtonLabel + '<span class="multiSelect caret"></span>' );
